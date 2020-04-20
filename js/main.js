@@ -18,6 +18,10 @@ let svg = d3
 let promises = [
   d3.csv("data/dfPovertyAdultLit.csv"),
   d3.csv("data/dfPovertyMobileOwn.csv"),
+  d3.csv("data/dfPovertyLaborForcePart.csv"),
+  d3.csv("data/dfPovertyEmplAg.csv"),
+  d3.csv("data/dfPovertyEmplIndustry.csv"),
+  d3.csv("data/dfPovertyEmplSvc.csv"),
 ];
 let allData = [];
 let xAxisLabel = "Adult Literacy";
@@ -37,9 +41,39 @@ Promise.all(promises).then(function (data) {
         ] = +d[
           "Adult literacy, 25 or more years old (% of population aged 25 or more)"
         ];
-      } else {
+      } else if (
+        d.hasOwnProperty("Households' mobile phone ownership (% of population)")
+      ) {
         d["Households' mobile phone ownership (% of population)"] = +d[
           "Households' mobile phone ownership (% of population)"
+        ];
+      } else if (
+        d.hasOwnProperty(
+          "Labor force participation rate (% of working age population, 15-64 years old)"
+        )
+      ) {
+        d[
+          "Labor force participation rate (% of working age population, 15-64 years old)"
+        ] = +d[
+          "Labor force participation rate (% of working age population, 15-64 years old)"
+        ];
+      } else if (
+        d.hasOwnProperty("Employment services (% of total employment)")
+      ) {
+        d["Employment services (% of total employment)"] = +d[
+          "Employment services (% of total employment)"
+        ];
+      } else if (
+        d.hasOwnProperty("Employment in industry (% of total employment)")
+      ) {
+        d["Employment in industry (% of total employment)"] = +d[
+          "Employment in industry (% of total employment)"
+        ];
+      } else if (
+        d.hasOwnProperty("Employment in agriculture (% of total employment)")
+      ) {
+        d["Employment in agriculture (% of total employment)"] = +d[
+          "Employment in agriculture (% of total employment)"
         ];
       }
     });
@@ -55,7 +89,17 @@ $("#indicatorChoice").on("change", function () {
   xAxisLabel =
     $("#indicatorChoice").val() === "adultLit"
       ? "Adult Literacy"
-      : "Mobile Phone Ownership";
+      : $("#indicatorChoice").val() === "mobileOwn"
+      ? "Mobile Phone Ownership"
+      : $("#indicatorChoice").val() === "laborForcePart"
+      ? "Labor Force Participation Rate"
+      : $("#indicatorChoice").val() === "emplAg"
+      ? "Employment In Ag Sector"
+      : $("#indicatorChoice").val() === "emplIndustry"
+      ? "Employment In Industrial Sector"
+      : $("#indicatorChoice").val() === "emplSvc"
+      ? "Employment In Services Sector"
+      : null;
   updateChart(allData, xAxisLabel);
 });
 
@@ -79,10 +123,48 @@ function updateChart(someData, xAxisLabel) {
     })
     .entries(someData[1]);
 
+  let dataLaborForcePart = d3
+    .nest()
+    .key(function (d) {
+      return d["Year"];
+    })
+    .entries(someData[2]);
+
+  let dataEmplAg = d3
+    .nest()
+    .key(function (d) {
+      return d["Year"];
+    })
+    .entries(someData[3]);
+
+  let dataEmplIndustry = d3
+    .nest()
+    .key(function (d) {
+      return d["Year"];
+    })
+    .entries(someData[4]);
+
+  let dataEmplSvc = d3
+    .nest()
+    .key(function (d) {
+      return d["Year"];
+    })
+    .entries(someData[5]);
+
   let filteredData =
     $("#indicatorChoice").val() === "adultLit"
       ? dataAdultLit[0]
-      : dataMobileOwn[0];
+      : $("#indicatorChoice").val() === "mobileOwn"
+      ? dataMobileOwn[0]
+      : $("#indicatorChoice").val() === "laborForcePart"
+      ? dataLaborForcePart[0]
+      : $("#indicatorChoice").val() === "emplAg"
+      ? dataEmplAg[0]
+      : $("#indicatorChoice").val() === "emplIndustry"
+      ? dataEmplIndustry[0]
+      : $("#indicatorChoice").val() === "emplSvc"
+      ? dataEmplSvc[0]
+      : null;
 
   filteredData =
     $("#geographicChoice").val() === "allProv"
@@ -93,6 +175,7 @@ function updateChart(someData, xAxisLabel) {
 
   // Add X axis
   let x = d3.scaleLinear().domain([0, 100]).range([0, width]);
+
   svg
     .append("g")
     .attr("transform", "translate(0," + height + ")")
@@ -157,10 +240,20 @@ function updateChart(someData, xAxisLabel) {
       return y(d["Poverty Rate (%)"]);
     })
     .attr("cx", function (d) {
+      //START HERE: Why is this resulting in errors??
+      // console.log(x(d["Households' mobile phone ownership (% of population)"]));
+
       return x(
-        d[
-          "Adult literacy, 25 or more years old (% of population aged 25 or more)"
-        ] || d["Households' mobile phone ownership (% of population)"]
+        d["Households' mobile phone ownership (% of population)"] ||
+          d[
+            "Adult literacy, 25 or more years old (% of population aged 25 or more)"
+          ] ||
+          d[
+            "Labor force participation rate (% of working age population, 15-64 years old)"
+          ] ||
+          d["Employment in agriculture (% of total employment)"] ||
+          d["Employment in industry (% of total employment)"] ||
+          d["Employment services (% of total employment)"]
       );
     })
     .attr("r", 5);

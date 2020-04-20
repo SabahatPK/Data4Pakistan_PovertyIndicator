@@ -9,12 +9,12 @@ import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
 import seaborn as sns
-get_ipython().run_line_magic('matplotlib', 'inline')
-pd.set_option('display.max_columns', 500)
+# get_ipython().run_line_magic('matplotlib', 'inline')
+# pd.set_option('display.max_columns', 500)
 
 
 # %%
-df = pd.read_csv("updatedData.csv")
+df = pd.read_csv("data/updatedData.csv")
 
 
 # %%
@@ -36,7 +36,7 @@ df['Year'] = pd.to_datetime(df['Year'], format='%Y')
 
 
 # %%
-# df.head()
+ df.head()
 
 
 # %%
@@ -137,7 +137,7 @@ dfPovertyAdultLit = df.loc[:, ['Province', 'District', 'Year',
 # %%
 # dfPovertyAdultLit - save to Dropbox:
 dfPovertyAdultLit.to_csv(
-    r'C:\Users\sabahat iqbal\Dropbox\Continuing Ed\Clean-up and EDA with Python\dfPovertyAdultLit.csv', index=False, header=True)
+    r'data\dfPovertyAdultLit.csv', index=False, header=True)
 
 
 # %%
@@ -149,8 +149,7 @@ dfPovertyMobileOwn = df.loc[:, ['Province', 'District', 'Year',
 # %%
 # dfPovertyAdultLit - save to Dropbox:
 dfPovertyMobileOwn.to_csv(
-    r'C:\Users\sabahat iqbal\Dropbox\Continuing Ed\Clean-up and EDA with Python\dfPovertyMobileOwn.csv', index=False, header=True)
+    r'data\dfPovertyMobileOwn.csv', index=False, header=True)
 
 
 # %%
-
