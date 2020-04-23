@@ -6,6 +6,8 @@
     <title>Data4Pak - Poverty</title>
     <!-- Bootstrap -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <!-- Font-Awesome -->
+    <script src="https://kit.fontawesome.com/09503a8969.js" crossorigin="anonymous"></script>
     <!-- Custom styling -->
     <link rel="stylesheet" href="css/style.css" />
   </head>
@@ -43,6 +45,7 @@
     <!-- Bootstrap grid setup -->
     <div class="container">
       <div class="row">
+        <div class="col">
         <h3>
           Insights from
           <a href="http://www.data4pakistan.com/" target="_blank"
@@ -68,17 +71,21 @@
         <option value="Sindh">Sindh</option>
         
       </select>?</h6>
-      
-      <br></br>
+    </div>
  
-      <div id="my_dataviz"></div>
-       <!-- <h6>Key Takeaways</h6>
-        <ul>
-          <li>TBA</li>
-          <li>TBA</li>
-          <li>TBA</li>
-        </ul> -->
-
+      
+      
+    </div>
+    <div class="row">
+      <div class="col-4">
+        <i class="far fa-play-circle fa-2x" id = "play"></i>
+        <i class="far fa-pause-circle fa-2x" id = "pause"></i>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-8">
+        <div id="my_dataviz"></div>
+      </div>
       </div>
 
       <!-- Beginning of footer -->

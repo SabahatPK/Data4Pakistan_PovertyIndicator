@@ -12,8 +12,6 @@ let svg = d3
   .append("g")
   .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-//OUTS: add a Year label to svg
-
 //Read the data
 let promises = [
   d3.csv("data/dfPovertyAdultLit.csv"),
@@ -25,6 +23,15 @@ let promises = [
 ];
 let allData = [];
 let xAxisLabel = "Adult Literacy";
+let time = 0;
+let displayTime = 2004 + time;
+let intervalBeat;
+
+//OUTS: add a Year label to svg
+let timeText = svg
+  .append("text")
+  .attr("x", width / 2)
+  .attr("y", margin.top);
 
 Promise.all(promises).then(function (data) {
   data.forEach(function (eachDataset) {
@@ -81,7 +88,7 @@ Promise.all(promises).then(function (data) {
 
   allData = data;
 
-  updateChart(allData, xAxisLabel);
+  updateChart(allData, xAxisLabel, time);
 });
 
 //Add in event listener for indicator choice.
@@ -100,15 +107,34 @@ $("#indicatorChoice").on("change", function () {
       : $("#indicatorChoice").val() === "emplSvc"
       ? "Employment In Services Sector"
       : null;
-  updateChart(allData, xAxisLabel);
+  updateChart(allData, xAxisLabel, time);
 });
 
 //Add in event listener for geographic choice.
 $("#geographicChoice").on("change", function () {
-  updateChart(allData, xAxisLabel);
+  updateChart(allData, xAxisLabel, time);
 });
 
-function updateChart(someData, xAxisLabel) {
+//Add in event listener for playing
+$("#play").on("click", function () {
+  intervalBeat = setInterval(pressPlay, 500);
+});
+
+//Add in event listener for pausing
+$("#pause").on("click", function () {
+  clearInterval(intervalBeat);
+});
+
+function pressPlay() {
+  if (time < 5) {
+    time += 1;
+  } else {
+    time = 0;
+  }
+  updateChart(allData, xAxisLabel, time);
+}
+
+function updateChart(someData, xAxisLabel, time) {
   let dataAdultLit = d3
     .nest()
     .key(function (d) {
@@ -151,19 +177,23 @@ function updateChart(someData, xAxisLabel) {
     })
     .entries(someData[5]);
 
+  displayTime = 2004 + time;
+  //OUTS: this has to update with play button
+  timeText.text("Year: " + displayTime);
+
   let filteredData =
     $("#indicatorChoice").val() === "adultLit"
-      ? dataAdultLit[0]
+      ? dataAdultLit[time]
       : $("#indicatorChoice").val() === "mobileOwn"
-      ? dataMobileOwn[0]
+      ? dataMobileOwn[time]
       : $("#indicatorChoice").val() === "laborForcePart"
-      ? dataLaborForcePart[0]
+      ? dataLaborForcePart[time]
       : $("#indicatorChoice").val() === "emplAg"
-      ? dataEmplAg[0]
+      ? dataEmplAg[time]
       : $("#indicatorChoice").val() === "emplIndustry"
-      ? dataEmplIndustry[0]
+      ? dataEmplIndustry[time]
       : $("#indicatorChoice").val() === "emplSvc"
-      ? dataEmplSvc[0]
+      ? dataEmplSvc[time]
       : null;
 
   filteredData =
@@ -240,7 +270,7 @@ function updateChart(someData, xAxisLabel) {
       return y(d["Poverty Rate (%)"]);
     })
     .attr("cx", function (d) {
-      //START HERE: Why is this resulting in errors??
+      //OUTS: Why is this resulting in errors??
       // console.log(x(d["Households' mobile phone ownership (% of population)"]));
 
       return x(
