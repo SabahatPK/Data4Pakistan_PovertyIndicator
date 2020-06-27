@@ -178,8 +178,7 @@ function updateChart(someData, xAxisLabel, time) {
     })
     .entries(someData[5]);
 
-  displayTime = 2004 + time;
-  //OUTS: this has to update with play button
+  displayTime = 2004 + time * 2;
   timeText.text("Year: " + displayTime);
 
   let filteredData =
